@@ -1,0 +1,61 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.env
+.env.*
+*.sqlite3
+*.log
+
+# ---- Flask/Gunicorn ----
+instance/
+*.db
+*.pid
+*.pyc
+
+# ---- Virtual environments ----
+venv/
+env/
+.venv/
+ENV/
+
+# ---- Terraform ----
+*.tfstate
+*.tfstate.*
+.crash
+.terraform/
+.terraform.lock.hcl
+*.backup
+*.plan
+
+# ---- VS Code ----
+.vscode/
+*.code-workspace
+
+# ---- macOS ----
+.DS_Store
+
+# ---- Archive files ----
+*.zip
+*.tar.gz
+app.zip
+
+# ---- Python packages ----
+pip-wheel-metadata/
+dist/
+build/
+*.egg-info/
+
+# ---- Logs & temp files ----
+*.tmp
+*.swp
+*.bak
+*.log
+
+# ---- Node/npm (if using for frontend) ----
+node_modules/
+npm-debug.log
+yarn.lock
+package-lock.json

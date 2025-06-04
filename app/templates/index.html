@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechMart AI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            height: 80vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin-bottom: 8px;
+            font-size: 1.8em;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .chat-container {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin: 18px 0;
+            padding: 15px 20px;
+            border-radius: 20px;
+            max-width: 85%;
+            word-wrap: break-word;
+            line-height: 1.5;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .bot-message {
+            background: white;
+            color: #333;
+            border: 1px solid #e9ecef;
+        }
+
+        .typing {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .input-section {
+            padding: 25px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #007bff;
+        }
+
+        .btn-send {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-send:hover {
+            transform: translateY(-2px);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-action:first-child {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-action:last-child {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                height: 90vh;
+                border-radius: 15px;
+            }
+            
+            .message {
+                max-width: 95%;
+                padding: 12px 16px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .input-section {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Custom scrollbar */
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 TechMart AI Assistant</h1>
+            <p>Powered by Azure AI | Deployed with Terraform</p>
+        </div>
+        
+        <div id="chatContainer" class="chat-container">
+            <div class="message bot-message">
+                🎉 <strong>Welcome to TechMart!</strong><br><br>
+                I'm your AI shopping assistant, powered by Azure AI services and automatically configured through Terraform.<br><br>
+                I can help you find:<br>
+                • 💻 Laptops (Gaming, Business, Ultrabooks)<br>
+                • 📱 Smartphones (iPhone, Android, Budget options)<br>
+                • 📊 Product comparisons and recommendations<br><br>
+                <strong>What are you looking for today?</strong>
+            </div>
+        </div>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <input type="text" id="messageInput" placeholder="Ask about laptops, phones, or any tech product..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()" class="btn-send">Send</button>
+            </div>
+            <div class="action-buttons">
+                <button onclick="uploadImage()" class="btn-action">📷 Upload Image</button>
+                <button onclick="checkHealth()" class="btn-action">🔧 System Status</button>
+                <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload()">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addMessage(text, isUser = false) {
+            const container = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            
+            // Convert markdown-like formatting to HTML
+            let formattedText = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>')
+                .replace(/• /g, '• ');
+            
+            messageDiv.innerHTML = formattedText;
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage(message, true);
+                input.value = '';
+                
+                // Show typing indicator
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'message bot-message typing';
+                typingDiv.innerHTML = '🤖 TechMart AI is thinking...';
+                document.getElementById('chatContainer').appendChild(typingDiv);
+                
+                fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: 'web_user',
+                        message: message
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Remove typing indicator
+                    document.querySelector('.typing').remove();
+                    
+                    if (data.success) {
+                        addMessage(data.response);
+                    } else {
+                        addMessage('❌ Sorry, I encountered an error: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    document.querySelector('.typing')?.remove();
+                    addMessage('🔌 Connection error. Please check your internet and try again.');
+                });
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function uploadImage() {
+            document.getElementById('imageInput').click();
+        }
+
+        function handleImageUpload() {
+            const fileInput = document.getElementById('imageInput');
+            const file = fileInput.files[0];
+            
+            if (file) {
+                addMessage(`📷 Uploading image: ${file.name}`, true);
+                
+                const formData = new FormData();
+                formData.append('image', file);
+                formData.append('user_id', 'web_user');
+                
+                // Show processing indicator
+                const processingDiv = document.createElement('div');
+                processingDiv.className = 'message bot-message typing';
+                processingDiv.innerHTML = '🔍 Analyzing your image with Azure Computer Vision...';
+                document.getElementById('chatContainer').appendChild(processingDiv);
+                
+                fetch('/api/image', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector('.typing').remove();
+                    
+                    if (data.success) {
+                        addMessage(data.response);
+                    } else {
+                        addMessage('❌ Sorry, I could not process your image: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    document.querySelector('.typing')?.remove();
+                    addMessage('🔌 Error processing image. Please try again.');
+                });
+                
+                fileInput.value = '';
+            }
+        }
+
+        function checkHealth() {
+            fetch('/api/health')
+                .then(response => response.json())
+                .then(data => {
+                    const services = data.services_configured || {};
+                    const serviceStatus = Object.entries(services)
+                        .map(([service, configured]) => `${configured ? '✅' : '❌'} ${service}`)
+                        .join('<br>');
+                    
+                    addMessage(`🔧 <strong>System Status:</strong><br><br>
+                        <strong>Overall:</strong> ${data.status}<br>
+                        <strong>Environment:</strong> ${data.environment || 'unknown'}<br>
+                        <strong>Bot Ready:</strong> ${data.bot_ready ? '✅' : '❌'}<br><br>
+                        <strong>Azure Services:</strong><br>
+                        ${serviceStatus}`);
+                })
+                .catch(() => {
+                    addMessage('❌ Could not check system status.');
+                });
+        }
+
+        // Auto-focus input on page load
+        window.onload = function() {
+            document.getElementById('messageInput').focus();
+        };
+    </script>
+</body>
+</html>
