@@ -1,4 +1,4 @@
 # Customize these values for your deployment
-location     = "East US"
+location     = "Australia East"
 environment  = "production"
 project_name = "techmart-ai-bot"
